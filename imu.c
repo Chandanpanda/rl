@@ -141,10 +141,10 @@ int main(void){
         rawY = ((quat[5]<<8) | quat[4]);
         rawZ = ((quat[6]<<8) | quat[7]);		
 
-		f_W = float(rawW)/16384.0f;	
-		f_X = float(rawX)/16384.0f;
-		f_Y = float(rawY)/16384.0f;
-		f_Z = float(rawZ)/16384.0f;
+		f_W = ((float) rawW)/16384.0f;	
+		f_X = ((float) rawX)/16384.0f;
+		f_Y = ((float) rawY)/16384.0f;
+		f_Z = ((float) rawZ)/16384.0f;
 		
         // Print to serial monitor
         printf("Ax:%6.2f Ay:%6.2f Az:%6.2f Gx:%6.2f Gy:%6.2f Gz:%6.2f Mx:%6.2f My:%6.2f Mz:%6.2f W:%4.2f X:%4.2f Y:%4.2f Z:%4.2f\n", f_accelX, f_accelY, f_accelZ, f_gyroX, f_gyroY, f_gyroZ,f_magX, f_magY, f_magZ, f_W, f_X, f_Y, f_Z);
