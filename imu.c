@@ -87,6 +87,16 @@ int main(void){
     int16_t gyroX, gyroY, gyroZ; // Combined 3 axis data
     float f_gyroX, f_gyroY, f_gyroZ; // Float type of acceleration data
     uint8_t val_g = 0x14; // Start register address
+
+    uint8_t mag[6]; // Store data from the 6 acceleration registers
+    int16_t magX, magY, magZ; // Combined 3 axis data
+    float f_magX, f_magY, f_magZ; // Float type of acceleration data
+    uint8_t val_m = 0x0E; // Start register address
+
+    uint8_t quat[8]; // Store data from the 6 acceleration registers
+    int16_t rawW, rawX, rawY, rawZ; // Combined 3 axis data
+    uint8_t val_q = 0x20; // Start register address
+    float f_W, f_X, f_Y, f_Z; // Float type of acceleration data
 	
     // Infinite Loop
     while(1){
@@ -112,8 +122,32 @@ int main(void){
         f_gyroY = gyroY / 100.00;
         f_gyroZ = gyroZ / 100.00;
 
+        i2c_write_blocking(I2C_PORT, addr, &val_m, 1, true);
+        i2c_read_blocking(I2C_PORT, addr, mag, 6, false);
+
+        magX = ((mag[1]<<8) | mag[0]);
+        magY = ((mag[3]<<8) | mag[2]);
+        magZ = ((mag[5]<<8) | mag[4]);
+
+        f_magX = magX / 100.00;
+        f_magY = magY / 100.00;
+        f_magZ = magZ / 100.00;
+
+        i2c_write_blocking(I2C_PORT, addr, &val_q, 1, true);
+        i2c_read_blocking(I2C_PORT, addr, quat, 8, false);
+
+        rawW = ((quat[1]<<8) | quat[0]);
+        rawX = ((quat[3]<<8) | quat[2]);
+        rawY = ((quat[5]<<8) | quat[4]);
+        rawZ = ((quat[6]<<8) | quat[7]);		
+
+		f_W = float(rawW)/16384.0f;	
+		f_X = float(rawX)/16384.0f;
+		f_Y = float(rawY)/16384.0f;
+		f_Z = float(rawZ)/16384.0f;
+		
         // Print to serial monitor
-        printf("Ax: %6.2f  Ay: %6.2f  Az: %6.2f  Gx: %6.2f  Gy: %6.2f  Gz: %6.2f\n", f_accelX, f_accelY, f_accelZ, f_gyroX, f_gyroY, f_gyroZ);
+        printf("Ax:%6.2f Ay:%6.2f Az:%6.2f Gx:%6.2f Gy:%6.2f Gz:%6.2f Mx:%6.2f My:%6.2f Mz:%6.2f W:%4.2f X:%4.2f Y:%4.2f Z:%4.2f\n", f_accelX, f_accelY, f_accelZ, f_gyroX, f_gyroY, f_gyroZ,f_magX, f_magY, f_magZ, f_W, f_X, f_Y, f_Z);
         sleep_ms(300);
     }
 }
